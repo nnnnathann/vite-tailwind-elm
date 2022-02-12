@@ -17,7 +17,7 @@
     "build:server": "swc -s --config-file=.swcrc server -d dist/server",
     "lint": "run-p lint:*",
     "lint:tsc": "tsc --noEmit",
-    "lint:eslint": "eslint",
+    "lint:eslint": "eslint src server tests-e2e",
     "lint:elm-review": "elm-review",
     "lint:format": "prettier --check .",
     "format": "prettier --write --plugin-search-dir=. .",
