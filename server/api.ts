@@ -1,5 +1,6 @@
 import express, { ErrorRequestHandler, Request, Response } from "express";
 import { checkSchema, matchedData, validationResult } from "express-validator";
+import { json } from "body-parser";
 
 /**
  * Build your endpoints here
@@ -13,20 +14,25 @@ export function createServer() {
 
   const theNumberPost = checkSchema({
     theNumber: {
-      in: ["query", "body"],
+      in: ["body"],
       isInt: true,
       toInt: true,
     },
   });
-  app.post("/theNumber", theNumberPost, (req: Request, res: Response) => {
-    const result = validationResult(req);
-    if (!result.isEmpty()) {
-      return res.status(422).json({ errors: result.array() });
+  app.post(
+    "/theNumber",
+    json(),
+    theNumberPost,
+    (req: Request, res: Response) => {
+      const result = validationResult(req);
+      if (!result.isEmpty()) {
+        return res.status(422).json({ errors: result.array() });
+      }
+      const data = matchedData(req);
+      theNumber = data.theNumber;
+      res.status(200).json(data);
     }
-    const data = matchedData(req);
-    theNumber = data.theNumber;
-    res.json(data);
-  });
+  );
   app.use(errorHandler);
   return app;
 }
