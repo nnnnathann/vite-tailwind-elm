@@ -1,0 +1,18 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "tailwindCSS.includeLanguages": {
+    "elm": "html"
+  },
+  "[elm]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "elmTooling.elm-ls-vscode",
+    "editor.linkedEditing": false,
+    "tailwindCSS.experimental.classRegex": ["\\bclass\\s+\"([^\"]*)\""]
+  },
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
+}

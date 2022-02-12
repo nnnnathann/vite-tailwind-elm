@@ -1,0 +1,32 @@
+aws-ecr-credentials:
+  image: codeship/aws-ecr-dockercfg-generator
+  encrypted_env_file: codeship-environment.encrypted
+  add_docker: true
+
+app-medamine:
+  build:
+    dockerfile_path: Dockerfile
+    args:
+      VITE_BASE_URL: https://new-applicationmm.oberd.com
+      VITE_MY_API_URL: https://my-apimm.oberd.com
+  cached: true
+
+app-qa:
+  build:
+    dockerfile_path: Dockerfile
+    args:
+      VITE_BASE_URL: https://new-applicationqa.oberd.com
+      VITE_MY_API_URL: https://my-apiqa.oberd.com
+  cached: true
+
+app-prod:
+  build:
+    dockerfile_path: Dockerfile
+    args:
+      VITE_BASE_URL: https://new-application.oberd.com
+      VITE_MY_API_URL: https://my-api.oberd.com
+  cached: true
+
+ecsy:
+  image: oberd/ecsy:0.2.10
+  encrypted_env_file: codeship-environment.encrypted

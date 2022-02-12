@@ -1,0 +1,53 @@
+# Build and Deploy to Medamine
+- name: medamine
+  type: serial
+  tag: ^(develop|medamine|feature)
+  steps:
+    - name: push-image
+      type: push
+      service: app-medamine
+      image_name: 269976911723.dkr.ecr.us-west-2.amazonaws.com/oberd/new-application
+      image_tag: "{{ .BuildID }}"
+      registry: https://269976911723.dkr.ecr.us-west-2.amazonaws.com
+      dockercfg_service: aws-ecr-credentials
+    - service: ecsy
+      name: deploy-medamine
+      command: sh -c "ecsy deploy medamine new-application 269976911723.dkr.ecr.us-west-2.amazonaws.com/oberd/new-application:${CI_BUILD_ID}"
+
+# Build and deploy for QA
+- name: qa
+  type: serial
+  tag: ^(qa|release)
+  steps:
+    - name: push-image
+      type: push
+      service: app-qa
+      image_name: 269976911723.dkr.ecr.us-west-2.amazonaws.com/oberd/new-application
+      image_tag: "{{ .BuildID }}"
+      registry: https://269976911723.dkr.ecr.us-west-2.amazonaws.com
+      dockercfg_service: aws-ecr-credentials
+    - service: ecsy
+      name: deploy-qa
+      command: sh -c "ecsy deploy oberd-qa new-application 269976911723.dkr.ecr.us-west-2.amazonaws.com/oberd/new-application:${CI_BUILD_ID}"
+
+# Build and Deploy to Prod
+- name: prod
+  type: serial
+  tag: ^(main)
+  steps:
+    - name: push-image
+      type: push
+      service: app-prod
+      image_name: 269976911723.dkr.ecr.us-west-2.amazonaws.com/oberd/new-application
+      image_tag: "{{ .BuildID }}"
+      registry: https://269976911723.dkr.ecr.us-west-2.amazonaws.com
+      dockercfg_service: aws-ecr-credentials
+    - service: ecsy
+      name: deploy-prod
+      command: sh -c "ecsy deploy oberd-prod new-application 269976911723.dkr.ecr.us-west-2.amazonaws.com/oberd/new-application:${CI_BUILD_ID}"
+
+# Any rando branch should still be tested
+- name: test-validation
+  exclude: ^(develop|medamine|feature|release|master|hotfix|qa)
+  service: app-medamine
+  command: echo "tests run in docker context"
