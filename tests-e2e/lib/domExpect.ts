@@ -1,4 +1,4 @@
-import { Page } from "puppeteer";
+import { Page } from "playwright";
 import { expect } from "vitest";
 
 export function expectContainsText(
@@ -6,7 +6,7 @@ export function expectContainsText(
   expected: string
 ): (page: Page) => Promise<void> {
   return async (page) => {
-    const text = await domGet(selector, "textContent")(page);
+    const text = await page.$eval(selector, (el) => el.textContent);
     expect(text).toContain(expected);
   };
 }
@@ -16,17 +16,7 @@ export function expectText(
   expected: string
 ): (page: Page) => Promise<void> {
   return async (page) => {
-    const text = await domGet(selector, "textContent")(page);
+    const text = await page.$eval(selector, (el) => el.textContent);
     expect(text).toBe(expected);
-  };
-}
-
-export function domGet<K extends keyof Element>(
-  selector: string,
-  key: K
-): (page: Page) => Promise<Element[K]> {
-  return async (page) => {
-    const el = await page.waitForSelector(selector);
-    return el.evaluate((e, key) => e[key], [key]) as Promise<Element[K]>;
   };
 }
