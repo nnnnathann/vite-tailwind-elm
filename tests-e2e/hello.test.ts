@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, test } from "vitest";
 import puppeteer from "puppeteer";
 import type { Browser, Page } from "puppeteer";
-import { expectContainsText, expectText } from "./lib/domExpect";
-import { mockJsonPath, path, setUp } from "./lib/interceptXhr";
+import { expectContainsText } from "./lib/domExpect";
+import { mockJsonPath, setUp } from "./lib/interceptXhr";
 
 describe("basic", async () => {
   let browser: Browser;
