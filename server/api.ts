@@ -1,4 +1,9 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, {
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  Response,
+} from "express";
 import { checkSchema, matchedData, validationResult } from "express-validator";
 
 /**
@@ -31,5 +36,17 @@ export function createServer() {
       res.json(data);
     }
   );
+  app.use(errorHandler);
   return app;
 }
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  console.error(JSON.stringify(err.stack));
+  const errors =
+    process.env.APP_ENV !== "production"
+      ? String(err.stack)
+          .split("\n")
+          .map((message) => ({ message }))
+      : ["Internal Server Error"];
+  res.status(500).send({ errors });
+};

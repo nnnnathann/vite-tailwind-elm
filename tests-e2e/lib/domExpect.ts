@@ -1,6 +1,16 @@
 import { Page } from "puppeteer";
 import { expect } from "vitest";
 
+export function expectContainsText(
+  selector: string,
+  expected: string
+): (page: Page) => Promise<void> {
+  return async (page) => {
+    const text = await domGet(selector, "textContent")(page);
+    expect(text).toContain(expected);
+  };
+}
+
 export function expectText(
   selector: string,
   expected: string

@@ -1,12 +1,12 @@
 module Main exposing (main)
 
+import Api
 import Browser
 import Browser.Navigation as Nav
 import Env
 import Html exposing (..)
 import Html.Attributes exposing (class, href, target)
 import Html.Events exposing (onClick)
-import Http
 import Url
 
 
@@ -35,6 +35,7 @@ type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , env : Result Env.Error Env.Env
+    , theNumber : Api.State Int
     }
 
 
@@ -44,20 +45,32 @@ init flags url key =
         env =
             Env.fromFlags flags
 
+        initCmd =
+            env
+                |> Result.map (\{ myApiUrl } -> Api.getTheNumber { apiUrl = myApiUrl, toMsg = GotTheNumber })
+                |> Result.withDefault Cmd.none
+
         newModel : Model
         newModel =
             { key = key
             , url = url
             , env = env
+            , theNumber =
+                if initCmd == Cmd.none then
+                    Api.Idle
+
+                else
+                    Api.Loading
             }
     in
-    ( newModel, Http.get { url = "http://google.com", expect = Http.expectWhatever (\_ -> NoOp) } )
+    ( newModel, initCmd )
 
 
 type Msg
     = UrlRequested Browser.UrlRequest
     | UrlChanged Url.Url
     | AccessDashboardClicked
+    | GotTheNumber (Result Api.Error Int)
     | NoOp
 
 
@@ -80,6 +93,9 @@ update msg model =
         AccessDashboardClicked ->
             ( model, Nav.pushUrl model.key "dashboard" )
 
+        GotTheNumber num ->
+            ( { model | theNumber = Api.Loaded num }, Cmd.none )
+
         NoOp ->
             ( model, Cmd.none )
 
@@ -99,6 +115,13 @@ view model =
                     |> Result.mapError (EnvError >> viewError)
                     |> Result.map (viewMain model)
                     |> unionResult
+                , div [ class "text-purple-500" ]
+                    [ Api.viewWithLoader
+                        (\i ->
+                            Html.text ("Server SAYS: " ++ String.fromInt i)
+                        )
+                        model.theNumber
+                    ]
                 ]
             ]
         ]

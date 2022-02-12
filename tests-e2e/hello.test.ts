@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, test } from "vitest";
 import puppeteer from "puppeteer";
 import type { Browser, Page } from "puppeteer";
-import { expectText } from "./lib/domExpect";
+import { expectContainsText, expectText } from "./lib/domExpect";
+import { mockJsonPath, path, setUp } from "./lib/interceptXhr";
 
 describe("basic", async () => {
   let browser: Browser;
@@ -12,18 +13,6 @@ describe("basic", async () => {
     page = await browser.newPage();
     page.setDefaultTimeout(2_000);
     await page.setRequestInterception(true);
-    page.on("request", async (e) => {
-      if (e.resourceType() === "xhr") {
-        console.error("[warning] request not intercepted: ", e.url());
-        e.respond({
-          status: 501,
-          contentType: "text/plain",
-          body: "Not Implemented",
-        });
-        return;
-      }
-      await e.continue();
-    });
   });
 
   afterAll(async () => {
@@ -31,7 +20,14 @@ describe("basic", async () => {
   });
 
   test("should have the correct title", async () => {
+    const theNumberMock = setUp([
+      mockJsonPath("/api/theNumber", {
+        theNumber: 42,
+      }),
+    ]);
+    await theNumberMock(page);
     await page.goto("http://localhost:3000", { timeout: 5000 });
-    await expectText("h1", "New Application")(page);
+    const validate = expectContainsText("body", `Server SAYS: 42`);
+    await validate(page);
   }, 5_000);
 });
