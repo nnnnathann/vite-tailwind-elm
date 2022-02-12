@@ -8,5 +8,5 @@
     "strict": true,
     "types": ["vite/client", "elm"]
   },
-  "include": ["./src/**/*.ts", "./tests/**/*.ts"]
+  "include": ["./server/**/*.ts", "./src/**/*.ts", "./tests/**/*.ts"]
 }

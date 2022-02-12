@@ -1,4 +1,15 @@
-module Api exposing (..)
+module Api exposing
+    ( Error(..)
+    , Request
+    , ResponseStatus(..)
+    , State(..)
+    , errorToHtml
+    , errorToString
+    , expectApiJson
+    , getTheNumber
+    , viewError
+    , viewWithLoader
+    )
 
 import Html exposing (Html)
 import Html.Attributes exposing (class)

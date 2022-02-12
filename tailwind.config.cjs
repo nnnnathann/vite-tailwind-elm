@@ -1,7 +1,7 @@
 module.exports = {
-    content: ["./src/**/*.elm"],
-    theme: {
-        extend: {},
-    },
-    plugins: [],
-}
+  content: ["./src/**/*.elm"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};

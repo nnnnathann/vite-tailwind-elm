@@ -1,4 +1,13 @@
-module Env exposing (..)
+module Env exposing
+    ( Env
+    , Error(..)
+    , Flags
+    , Mode(..)
+    , errorToString
+    , fromFlags
+    , modeFromString
+    , modeToString
+    )
 
 import Json.Decode as Dec
 
