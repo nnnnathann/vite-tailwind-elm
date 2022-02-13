@@ -1,6 +1,6 @@
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import supertest, { SuperTest, Test } from "supertest";
-import { createServer } from "../../server/api";
+import { beforeAll, describe, expect, test } from "vitest";
+import supertest from "supertest";
+import { createServer } from "../../server/api.js";
 import express from "express";
 
 describe("/api", () => {

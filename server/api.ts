@@ -1,6 +1,6 @@
 import express, { ErrorRequestHandler, Request, Response } from "express";
 import { checkSchema, matchedData, validationResult } from "express-validator";
-import { json } from "body-parser";
+import bodyparser from "body-parser";
 
 /**
  * Build your endpoints here
@@ -21,7 +21,7 @@ export function createServer() {
   });
   app.post(
     "/theNumber",
-    json(),
+    bodyparser.json(),
     theNumberPost,
     (req: Request, res: Response) => {
       const result = validationResult(req);

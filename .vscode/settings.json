@@ -3,6 +3,9 @@
   "tailwindCSS.includeLanguages": {
     "elm": "html"
   },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[elm]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "elmTooling.elm-ls-vscode",
