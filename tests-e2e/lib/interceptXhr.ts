@@ -1,4 +1,4 @@
-import { Page, Response } from "playwright";
+import { Page, Response } from "playwright-chromium";
 
 export type ResponseMock = (page: Page) => () => Promise<Response>;
 

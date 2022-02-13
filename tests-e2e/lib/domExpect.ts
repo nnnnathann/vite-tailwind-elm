@@ -1,4 +1,4 @@
-import { Page } from "playwright";
+import { Page } from "playwright-chromium";
 import { expect } from "vitest";
 
 export function expectContainsText(

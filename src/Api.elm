@@ -18,39 +18,8 @@ import Json.Decode as Dec
 import Json.Encode as Enc
 
 
-type State a
-    = Idle
-    | Loading
-    | Loaded (Result Error a)
 
-
-viewWithLoader : (a -> Html msg) -> State a -> Html msg
-viewWithLoader view state =
-    case state of
-        Idle ->
-            Html.span [] []
-
-        Loading ->
-            Html.text "Loading..."
-
-        Loaded (Err err) ->
-            viewError err
-
-        Loaded (Ok a) ->
-            view a
-
-
-viewError : Error -> Html msg
-viewError err =
-    Html.div [ class "p-8 fixed left-0 top-0 w-full" ]
-        [ Html.div [ class "text-red-300 bg-slate-800 p-8 rounded drop-shadow-2xl" ] [ errorToHtml err ]
-        ]
-
-
-
-{-
-   Requests for use in the app code
--}
+{- Read the number from the api -}
 
 
 getTheNumber : { apiUrl : String, toMsg : Result Error Int -> msg } -> Cmd msg
@@ -71,9 +40,7 @@ getTheNumber { apiUrl, toMsg } =
 
 
 
-{-
-   These things are common to all the API requests
--}
+{- These things are common to all the API requests -}
 
 
 type Error
@@ -91,9 +58,10 @@ errorToHtml err =
                 (List.concat
                     [ [ Html.h1 [ class "font-bold border-b-2 border-dashed border-slate-600 pb-4 mb-4" ] [ Html.text title ] ]
                     , msgs
-                        |> List.map Html.text
-                        |> List.map List.singleton
-                        |> List.map (Html.div [ class "whitespace-nowrap" ])
+                        |> List.map
+                            (\msg ->
+                                Html.div [ class "whitespace-nowrap" ] [ Html.text msg ]
+                            )
                     ]
                 )
     in
@@ -181,25 +149,17 @@ apiResponse decoder response =
 readApiResponse : Dec.Decoder a -> Http.Metadata -> String -> Result Error a
 readApiResponse decoder meta body =
     let
-        bodyValue : String -> Result Error a
-        bodyValue b =
-            Dec.decodeString decoder b
-                |> Result.mapError Dec.errorToString
-                |> Result.mapError List.singleton
-                |> Result.mapError BadFormat
-
         errorBody : (List String -> Error) -> String -> Result Error a
-        errorBody err b =
+        errorBody toErr b =
             Dec.decodeString decodeApiErrorBody b
-                |> Result.mapError Dec.errorToString
-                |> Result.mapError List.singleton
-                |> Result.mapError BadFormat
-                |> Result.map err
+                |> Result.mapError formatError
+                |> Result.map toErr
                 |> Result.andThen Err
     in
     case statusFromInt meta.statusCode of
         StatusOk ->
-            bodyValue body
+            Dec.decodeString decoder body
+                |> Result.mapError formatError
 
         StatusBadRequest _ ->
             errorBody BadRequest body
@@ -209,6 +169,11 @@ readApiResponse decoder meta body =
 
         StatusUnknown _ ->
             errorBody ServerProblem body
+
+
+formatError : Dec.Error -> Error
+formatError =
+    Dec.errorToString >> List.singleton >> BadFormat
 
 
 decodeApiErrorBody : Dec.Decoder (List String)
@@ -243,3 +208,36 @@ statusFromInt status =
 
     else
         StatusUnknown status
+
+
+
+{- Management for values loaded from the API -}
+
+
+type State a
+    = Idle
+    | Loading
+    | Loaded (Result Error a)
+
+
+viewWithLoader : (a -> Html msg) -> State a -> Html msg
+viewWithLoader view state =
+    case state of
+        Idle ->
+            Html.span [] []
+
+        Loading ->
+            Html.text "Loading..."
+
+        Loaded (Err err) ->
+            viewError err
+
+        Loaded (Ok a) ->
+            view a
+
+
+viewError : Error -> Html msg
+viewError err =
+    Html.div [ class "p-8 fixed left-0 top-0 w-full" ]
+        [ Html.div [ class "text-red-300 bg-slate-800 p-8 rounded drop-shadow-2xl" ] [ errorToHtml err ]
+        ]

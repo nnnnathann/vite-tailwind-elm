@@ -3,7 +3,7 @@ module Main exposing (main)
 import Api
 import Browser
 import Browser.Navigation as Nav
-import Env
+import Flags
 import Html exposing (..)
 import Html.Attributes exposing (class, href, target)
 import Html.Events exposing (onClick)
@@ -16,10 +16,10 @@ appTitle =
 
 
 type AppError
-    = EnvError Env.Error
+    = FlagsError Flags.Error
 
 
-main : Program Env.Flags Model Msg
+main : Program Flags.Flags Model Msg
 main =
     Browser.application
         { init = init
@@ -34,16 +34,16 @@ main =
 type alias Model =
     { key : Nav.Key
     , url : Url.Url
-    , env : Result Env.Error Env.Env
+    , env : Result Flags.Error Flags.Env
     , theNumber : Api.State Int
     }
 
 
-init : Env.Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init : Flags.Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     let
         env =
-            Env.fromFlags flags
+            Flags.fromFlags flags
 
         initCmd =
             env
@@ -112,7 +112,7 @@ view model =
         [ div [ class "h-screen flex items-center justify-center bg-slate-200" ]
             [ div [ class "bg-white p-8 shadow rounded text-center" ]
                 [ model.env
-                    |> Result.mapError (EnvError >> viewError)
+                    |> Result.mapError (FlagsError >> viewError)
                     |> Result.map (viewMain model)
                     |> unionResult
                 , div [ class "text-purple-500" ]
@@ -128,12 +128,12 @@ view model =
     }
 
 
-viewMain : Model -> Env.Env -> Html.Html Msg
+viewMain : Model -> Flags.Env -> Html.Html Msg
 viewMain model env =
     div []
         [ h1 [ class "mb-4" ] [ text appTitle ]
         , p [ class "text-left" ] [ text ("Welcome to the path " ++ model.url.path) ]
-        , p [ class "text-left" ] [ text ("Running in " ++ Env.modeToString env.mode ++ " mode") ]
+        , p [ class "text-left" ] [ text ("Running in " ++ Flags.modeToString env.mode ++ " mode") ]
         , p [ class "text-left" ]
             [ viewInfoLink "https://vitejs.dev" "Learn more about Vite"
             , viewInfoLink "https://tailwindcss.com" "Learn more about Tailwind"
@@ -156,8 +156,8 @@ viewError err =
             div [ class "border-l-4 p-2 border-red-400" ] [ text msg ]
     in
     case err of
-        EnvError envErr ->
-            Env.errorToString envErr
+        FlagsError envErr ->
+            Flags.errorToString envErr
                 |> errMessage
 
 

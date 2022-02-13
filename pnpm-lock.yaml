@@ -23,7 +23,7 @@ specifiers:
   express-validator: ^6.14.0
   nodemon: ^2.0.15
   npm-run-all: ^4.1.5
-  playwright: ^1.19.0
+  playwright-chromium: ^1.19.0
   postcss: ^8.4.5
   prettier: ^2.5.1
   start-server-and-test: ^1.14.0
@@ -62,7 +62,7 @@ devDependencies:
   eslint-plugin-import: 2.25.4_eslint@8.9.0
   nodemon: 2.0.15
   npm-run-all: 4.1.5
-  playwright: 1.19.0
+  playwright-chromium: 1.19.0
   postcss: 8.4.6
   prettier: 2.5.1
   start-server-and-test: 1.14.0
@@ -3604,6 +3604,19 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
+  /playwright-chromium/1.19.0:
+    resolution: {integrity: sha512-KmqJRTRFJqwvIny0XNjQV/PTjUszvjO2E9Rpe/WOljOgnFH3TKRSf0ShFcP8YrPirVF2GOXYtyw+Ip0z2Y+7Xg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      playwright-core: 1.19.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+    dev: true
+
   /playwright-core/1.19.0:
     resolution: {integrity: sha512-mlT/2pHUQbcZumVIKD4iwIKtO2k/BFHYmOAwOepdEvHLgqJrmsCgHvDgpehM6wDh5chksh2sJZIp8dZQ6158Yw==}
     engines: {node: '>=12'}
@@ -3625,19 +3638,6 @@ packages:
       ws: 8.4.2
       yauzl: 2.10.0
       yazl: 2.5.1
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    dev: true
-
-  /playwright/1.19.0:
-    resolution: {integrity: sha512-wEhlkEx4QCzFgl5prkdPOjK5dLK9M3nKJuqZdNtpZirIzkDnbIbVZbEmo2Uh177ZbXTWnt184BkvM+hsIvUFVg==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    dependencies:
-      playwright-core: 1.19.0
     transitivePeerDependencies:
       - bufferutil
       - supports-color

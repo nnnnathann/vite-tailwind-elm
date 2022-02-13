@@ -1,4 +1,4 @@
-module Env exposing
+module Flags exposing
     ( Env
     , Error(..)
     , Flags

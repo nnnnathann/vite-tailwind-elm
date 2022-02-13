@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, test } from "vitest";
-import { Browser, chromium, Page } from "playwright";
+import { Browser, chromium, Page } from "playwright-chromium";
 import { expectContainsText } from "./lib/domExpect.js";
 import { mockJsonPath } from "./lib/interceptXhr.js";
 
